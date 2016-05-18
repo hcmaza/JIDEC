@@ -20,6 +20,7 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 import components.TextLineNumber;
 import controller.Sintaxis;
+import javax.swing.text.DefaultEditorKit;
 
 /**
  *
@@ -50,6 +51,10 @@ public class NewApplication extends javax.swing.JFrame {
         jTextPane1 = new javax.swing.JTextPane(doc);
         jScrollPane2 = new javax.swing.JScrollPane();
         jTree1 = new javax.swing.JTree();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        jTextArea1 = new javax.swing.JTextArea();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         openMenuItem = new javax.swing.JMenuItem();
@@ -57,10 +62,9 @@ public class NewApplication extends javax.swing.JFrame {
         saveAsMenuItem = new javax.swing.JMenuItem();
         exitMenuItem = new javax.swing.JMenuItem();
         editMenu = new javax.swing.JMenu();
-        cutMenuItem = new javax.swing.JMenuItem();
-        copyMenuItem = new javax.swing.JMenuItem();
-        pasteMenuItem = new javax.swing.JMenuItem();
-        deleteMenuItem = new javax.swing.JMenuItem();
+        cutMenuItem = new javax.swing.JMenuItem(new DefaultEditorKit.CutAction());
+        copyMenuItem = new javax.swing.JMenuItem(new DefaultEditorKit.CopyAction());
+        pasteMenuItem = new javax.swing.JMenuItem(new DefaultEditorKit.PasteAction());
         helpMenu = new javax.swing.JMenu();
         contentsMenuItem = new javax.swing.JMenuItem();
         aboutMenuItem = new javax.swing.JMenuItem();
@@ -93,6 +97,16 @@ public class NewApplication extends javax.swing.JFrame {
         jScrollPane1.setRowHeaderView( tln );
 
         jScrollPane2.setViewportView(jTree1);
+
+        jTextArea1.setEditable(false);
+        jTextArea1.setColumns(20);
+        jTextArea1.setRows(5);
+        jScrollPane3.setViewportView(jTextArea1);
+
+        jLabel2.setFont(new java.awt.Font("Cantarell", 1, 18)); // NOI18N
+        jLabel2.setText("Salida");
+
+        jLabel3.setText("Conección");
 
         fileMenu.setMnemonic('f');
         fileMenu.setText("File");
@@ -141,19 +155,30 @@ public class NewApplication extends javax.swing.JFrame {
 
         cutMenuItem.setMnemonic('t');
         cutMenuItem.setText("Cut");
+        cutMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cutMenuItemActionPerformed(evt);
+            }
+        });
         editMenu.add(cutMenuItem);
 
         copyMenuItem.setMnemonic('y');
         copyMenuItem.setText("Copy");
+        copyMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                copyMenuItemActionPerformed(evt);
+            }
+        });
         editMenu.add(copyMenuItem);
 
         pasteMenuItem.setMnemonic('p');
         pasteMenuItem.setText("Paste");
+        pasteMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pasteMenuItemActionPerformed(evt);
+            }
+        });
         editMenu.add(pasteMenuItem);
-
-        deleteMenuItem.setMnemonic('d');
-        deleteMenuItem.setText("Delete");
-        editMenu.add(deleteMenuItem);
 
         menuBar.add(editMenu);
 
@@ -183,17 +208,30 @@ public class NewApplication extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(10, 10, 10)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 530, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane3)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 685, Short.MAX_VALUE)
+                        .addContainerGap())
+                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(0, 6, Short.MAX_VALUE)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 320, javax.swing.GroupLayout.PREFERRED_SIZE))
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                .addGap(6, 6, 6)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jScrollPane1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel3))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 531, Short.MAX_VALUE)))
         );
 
         pack();
@@ -214,10 +252,22 @@ public class NewApplication extends javax.swing.JFrame {
           //jTextPane1.read( new FileReader( file.getAbsolutePath() ), null );
           FileReader f = new FileReader(file);
            BufferedReader b = new BufferedReader(f);
+           int contador=0;
         while((cadena = b.readLine())!=null) {
-            System.out.println(cadena+"\n");
+            
+            for(int c = 0; c < cadena.length() ; c++){
+               
               try {
-                  doc.insertString(0, cadena+"\n", attr);
+                  abrirarchivo = true;
+                  doc.insertString(contador++, ""+cadena.charAt(c), attr);
+                  System.out.println("----"+cadena.charAt(c));
+              } catch (BadLocationException ex) {
+                  Logger.getLogger(NewApplication.class.getName()).log(Level.SEVERE, null, ex);
+              }
+            }
+                
+              try {  
+                  doc.insertString(contador++, "\n", attr);
               } catch (BadLocationException ex) {
                   Logger.getLogger(NewApplication.class.getName()).log(Level.SEVERE, null, ex);
               }
@@ -260,6 +310,19 @@ public class NewApplication extends javax.swing.JFrame {
         
     }//GEN-LAST:event_aboutMenuItemActionPerformed
 
+    private void cutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cutMenuItemActionPerformed
+        
+    }//GEN-LAST:event_cutMenuItemActionPerformed
+
+    private void copyMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_copyMenuItemActionPerformed
+        
+    }//GEN-LAST:event_copyMenuItemActionPerformed
+
+    private void pasteMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pasteMenuItemActionPerformed
+        
+        
+    }//GEN-LAST:event_pasteMenuItemActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -300,7 +363,6 @@ public class NewApplication extends javax.swing.JFrame {
     private javax.swing.JMenuItem contentsMenuItem;
     private javax.swing.JMenuItem copyMenuItem;
     private javax.swing.JMenuItem cutMenuItem;
-    private javax.swing.JMenuItem deleteMenuItem;
     private javax.swing.JMenu editMenu;
     private javax.swing.JMenuItem exitMenuItem;
     private javax.swing.JMenu fileMenu;
@@ -308,8 +370,12 @@ public class NewApplication extends javax.swing.JFrame {
     private javax.swing.JDialog jDialog1;
     private javax.swing.JFileChooser jFileChooser1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextPane jTextPane1;
     private javax.swing.JTree jTree1;
     private javax.swing.JMenuBar menuBar;
@@ -326,44 +392,107 @@ final AttributeSet attrGray = cont.addAttribute(cont.getEmptySet(), StyleConstan
 final AttributeSet attrBlue = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, Color.BLUE);
 final AttributeSet attrGreen = cont.addAttribute(cont.getEmptySet(), StyleConstants.Foreground, Color.GREEN);
 final AttributeSet attrBoldBlack = cont.addAttribute(cont.getEmptySet(), StyleConstants.Bold, Color.BLACK);
+final AttributeSet attrItalic = cont.addAttribute(cont.getEmptySet(), StyleConstants.Italic, Boolean.TRUE);
 
 DefaultStyledDocument doc = new DefaultStyledDocument() {
     Sintaxis sintaxis = new Sintaxis();
+    int interruptor = 0;
+    int interruptorcomentario = 0;
+    int comentariosimple = 0;
+    int iniciocomentario = 0;
+    int fincomentario = 0; 
+    
     
     public void insertString (int offset, String str, AttributeSet a) throws BadLocationException {
         
-        str = sintaxis.ControllSintaxis(str);
+        if(abrirarchivo){
+            abrirarchivo = false;
+        }else{
+            str = sintaxis.ControllSintaxis(str);
+        }
+        
+        
+        
         super.insertString(offset, str , a);
         String text = getText(0, getLength());
+        
         int before = findLastNonWordChar(text, offset);
+     
         if (before < 0) before = 0;
         int after = findFirstNonWordChar(text, offset + str.length());
+     
         int wordL = before;
         int wordR = before;
         
         
-
+        
+switch(interruptorcomentario ){
+    case 0:
         while (wordR <= after) {
-            if (wordR == after || String.valueOf(text.charAt(wordR)).matches("\\W")) {
-                if(text.substring(wordL, wordR).matches("(\\W)*(\\\\|\\/*|\\*\\/|hugo)")){
-                    setCharacterAttributes(wordL, wordR - wordL, attrGray, false);
+           
+             if (wordR == after || String.valueOf(text.charAt(wordR)).matches("\\W")) {
+           
+                if(text.substring(wordL, wordR).matches("(\\W)*(\\/)")){
+                   
+                    comentariosimple = wordL;
+                    interruptorcomentario = 1;
+                   
                 }else{
-                
+                     
                     if(text.substring(wordL, wordR).matches("(\\W)*(#include|#define|#if|auto|double|int|struct|break|else|long|switch|case|enum|register|typedef|char|extern|return|union|const|float|short|unsigned|continue|for|signed|void|default|goto|sizeof|size_t|volatile|do|if|static|while|len|NULL|FILE)")){
                         setCharacterAttributes(wordL, wordR - wordL, attr, false);
 
                     }else{
-                        setCharacterAttributes(wordL, wordR - wordL, attrBlack, false);
-                    
+                        
+                        if(text.substring(wordL, wordR).matches("(\\W)*(printf|scanf|fopen|fclose|feof|fgetc|fegts|fmod|getch|system|time|acos|asin|atan|ceil|cos|cosh|exp|fabs|labs|floor|log|log10|pow|sin|sinh|sqrt|tan|tanh|abs|rand|srand|div|atof|atoi|atol|fprintf|fputc|fputs|fread|free|calloc|malloc|fscanf|fseek|ftell|fwrite|getc|print|getchar|gets|isalnum|isalpha|isascii|iscntrl|isdigit|isgraph|islower|isodigit|isprint|ispunct|isspace|isupper|isxdigit|strcmp|strcmpi|strcpy|strncpy|strlen|strset|strtok|toascii|tolower|toupper)")){
+                            setCharacterAttributes(wordL, wordR - wordL, attrBlue, false);
+
+                        }else{
+                        
+                            setCharacterAttributes(wordL, wordR - wordL, attrBlack, false);
+                        }
                        
                     }
                     wordL = wordR;
                 }    
             }
-            
-            
+           
             wordR++;
         }
+        break;
+    case 1: 
+         
+           setCharacterAttributes(comentariosimple, offset - comentariosimple, attrGray, false);
+           setCharacterAttributes(comentariosimple, offset - comentariosimple, attrItalic, false); 
+           
+          
+           
+                    if(offset > 2 && text.substring(offset-2, offset).matches("(\\W)*(\\*\\/)")){
+                   
+                        System.out.println("sdfaaaaaaaaaaa");
+                        fincomentario = wordR;
+                        interruptorcomentario = 2;
+                        break;
+           
+                    }
+           
+           
+           if (str.equals("\n") ) {
+                comentariosimple = 0;
+                interruptorcomentario = 0;
+            }
+           break;
+    case 2:
+        
+            comentariosimple = 0;
+            interruptorcomentario = 0;
+           
+            System.out.println("finnnnnnn");
+        break;
+            
+        }
+
+        
     }
 
     public void remove (int offs, int len) throws BadLocationException {
@@ -374,7 +503,7 @@ DefaultStyledDocument doc = new DefaultStyledDocument() {
             if (before < 0) before = 0;
             int after = findFirstNonWordChar(text, offs);
 
-            if (text.substring(before, after).matches("(\\W)*(private|public|protected|#include)")) {
+            if (text.substring(before, after).matches("(\\W)*(#include|#define|#if|auto|double|int|struct|break|else|long|switch|case|enum|register|typedef|char|extern|return|union|const|float|short|unsigned|continue|for|signed|void|default|goto|sizeof|size_t|volatile|do|if|static|while|len|NULL|FILE)")) {
                 setCharacterAttributes(before, after - before, attr, false);
             } else {
                 setCharacterAttributes(before, after - before, attrBlack, false);
@@ -399,4 +528,7 @@ DefaultStyledDocument doc = new DefaultStyledDocument() {
         }
         return index;
     }
+    
+    boolean abrirarchivo = false;
+    
 }
