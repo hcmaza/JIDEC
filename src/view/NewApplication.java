@@ -431,28 +431,37 @@ switch(interruptorcomentario ){
         while (wordR <= after) {
            
              if (wordR == after || String.valueOf(text.charAt(wordR)).matches("\\W")) {
-           
-                if(text.substring(wordL, wordR).matches("(\\W)*(\\/)")){
+            //System.out.println("la impresion se encontro  con doble barra "+text.substring(offset -2, offset));
+                if(offset > 1 && text.substring(offset-2, offset).matches("(.)*(\\/\\/)")){
+                    
                    
-                    comentariosimple = wordL;
+                    comentariosimple = wordL - 1 ;
                     interruptorcomentario = 1;
                    
                 }else{
-                     
-                    if(text.substring(wordL, wordR).matches("(\\W)*(#include|#define|#if|auto|double|int|struct|break|else|long|switch|case|enum|register|typedef|char|extern|return|union|const|float|short|unsigned|continue|for|signed|void|default|goto|sizeof|size_t|volatile|do|if|static|while|len|NULL|FILE)")){
-                        setCharacterAttributes(wordL, wordR - wordL, attr, false);
-
-                    }else{
-                        
-                        if(text.substring(wordL, wordR).matches("(\\W)*(printf|scanf|fopen|fclose|feof|fgetc|fegts|fmod|getch|system|time|acos|asin|atan|ceil|cos|cosh|exp|fabs|labs|floor|log|log10|pow|sin|sinh|sqrt|tan|tanh|abs|rand|srand|div|atof|atoi|atol|fprintf|fputc|fputs|fread|free|calloc|malloc|fscanf|fseek|ftell|fwrite|getc|print|getchar|gets|isalnum|isalpha|isascii|iscntrl|isdigit|isgraph|islower|isodigit|isprint|ispunct|isspace|isupper|isxdigit|strcmp|strcmpi|strcpy|strncpy|strlen|strset|strtok|toascii|tolower|toupper)")){
-                            setCharacterAttributes(wordL, wordR - wordL, attrBlue, false);
-
+                    
+                    
+                        if(offset > 1 && text.substring(offset-2, offset).matches("(.)*(\\/\\*)")){
+                            System.out.println("la impresion se encontro  con barra asterisco");
+                            iniciocomentario = wordL - 1;
+                            interruptorcomentario = 2;
                         }else{
-                        
-                            setCharacterAttributes(wordL, wordR - wordL, attrBlack, false);
-                        }
-                       
-                    }
+                     
+                            if(text.substring(wordL, wordR).matches("(\\W)*(#include|#define|#if|auto|double|int|struct|break|else|long|switch|case|enum|register|typedef|char|extern|return|union|const|float|short|unsigned|continue|for|signed|void|default|goto|sizeof|size_t|volatile|do|if|static|while|len|NULL|FILE)")){
+                                setCharacterAttributes(wordL, wordR - wordL, attr, false);
+
+                            }else{
+
+                                if(text.substring(wordL, wordR).matches("(\\W)*(printf|scanf|fopen|fclose|feof|fgetc|fegts|fmod|getch|system|time|acos|asin|atan|ceil|cos|cosh|exp|fabs|labs|floor|log|log10|pow|sin|sinh|sqrt|tan|tanh|abs|rand|srand|div|atof|atoi|atol|fprintf|fputc|fputs|fread|free|calloc|malloc|fscanf|fseek|ftell|fwrite|getc|print|getchar|gets|isalnum|isalpha|isascii|iscntrl|isdigit|isgraph|islower|isodigit|isprint|ispunct|isspace|isupper|isxdigit|strcmp|strcmpi|strcpy|strncpy|strlen|strset|strtok|toascii|tolower|toupper)")){
+                                    setCharacterAttributes(wordL, wordR - wordL, attrBlue, false);
+
+                                }else{
+
+                                    setCharacterAttributes(wordL, wordR - wordL, attrBlack, false);
+                                }
+
+                            }
+                        }    
                     wordL = wordR;
                 }    
             }
@@ -465,29 +474,23 @@ switch(interruptorcomentario ){
            setCharacterAttributes(comentariosimple, offset - comentariosimple, attrGray, false);
            setCharacterAttributes(comentariosimple, offset - comentariosimple, attrItalic, false); 
            
-          
-           
-                    if(offset > 2 && text.substring(offset-2, offset).matches("(\\W)*(\\*\\/)")){
-                   
-                        System.out.println("sdfaaaaaaaaaaa");
-                        fincomentario = wordR;
-                        interruptorcomentario = 2;
-                        break;
-           
-                    }
-           
-           
-           if (str.equals("\n") ) {
+        if (str.equals("\n") ) {
                 comentariosimple = 0;
                 interruptorcomentario = 0;
             }
            break;
     case 2:
-        
-            comentariosimple = 0;
-            interruptorcomentario = 0;
-           
-            System.out.println("finnnnnnn");
+          setCharacterAttributes(iniciocomentario, offset - iniciocomentario, attrGray, false);
+           setCharacterAttributes(iniciocomentario, offset - iniciocomentario, attrItalic, false); 
+           if(offset > 2 && text.substring(offset-2, offset).matches("(\\W)*(\\*\\/)")){
+                   
+                        iniciocomentario = 0;
+                        interruptorcomentario = 0;
+
+                        System.out.println("finnnnnnn");
+                        
+                    }
+            
         break;
             
         }
