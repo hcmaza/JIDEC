@@ -19,7 +19,20 @@ import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 import components.TextLineNumber;
+import controller.Compile;
+import controller.Configuracion;
+import controller.Run;
 import controller.Sintaxis;
+import java.nio.file.CopyOption;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.FileAttribute;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
+import java.util.Set;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.DefaultEditorKit;
 
 /**
@@ -33,6 +46,13 @@ public class NewApplication extends javax.swing.JFrame {
      */
     public NewApplication() {
         initComponents();
+        jFileChooser1.setCurrentDirectory(new File(System.getProperty("user.home")));
+        jFileChooser1.setFileSelectionMode(jFileChooser1.FILES_AND_DIRECTORIES);
+        jFileChooser1.addChoosableFileFilter(new FileNameExtensionFilter("c", ".c"));
+        jFileChooser1.addChoosableFileFilter(new FileNameExtensionFilter("c++", ".cpp"));
+        jFileChooser1.addChoosableFileFilter(new FileNameExtensionFilter("cc", ".cc"));
+        jFileChooser1.setAcceptAllFileFilterUsed(true);
+        this.jTextAreaSalida.setComponentPopupMenu(jPopupMenuSalida);
     }
 
     /**
@@ -47,24 +67,39 @@ public class NewApplication extends javax.swing.JFrame {
         jFileChooser1 = new javax.swing.JFileChooser();
         jDialog1 = new javax.swing.JDialog();
         jLabel1 = new javax.swing.JLabel();
+        jPopupMenuSalida = new javax.swing.JPopupMenu();
+        jMenuItemClear = new javax.swing.JMenuItem();
+        jDialogConfiguracion = new javax.swing.JDialog();
+        jTextFieldPathCompilador = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
+        jSeparator1 = new javax.swing.JSeparator();
+        jButton2 = new javax.swing.JButton();
+        jLabel5 = new javax.swing.JLabel();
+        jTextFieldArgumentos = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextPane1 = new javax.swing.JTextPane(doc);
         jScrollPane2 = new javax.swing.JScrollPane();
         jTree1 = new javax.swing.JTree();
         jScrollPane3 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        jTextAreaSalida = new javax.swing.JTextArea();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
+        nuevoProyectoMenu = new javax.swing.JMenuItem();
         openMenuItem = new javax.swing.JMenuItem();
         saveMenuItem = new javax.swing.JMenuItem();
         saveAsMenuItem = new javax.swing.JMenuItem();
         exitMenuItem = new javax.swing.JMenuItem();
+        runMenu = new javax.swing.JMenu();
+        runMenuItem = new javax.swing.JMenuItem();
+        compilarMenuItem = new javax.swing.JMenuItem();
         editMenu = new javax.swing.JMenu();
         cutMenuItem = new javax.swing.JMenuItem(new DefaultEditorKit.CutAction());
         copyMenuItem = new javax.swing.JMenuItem(new DefaultEditorKit.CopyAction());
         pasteMenuItem = new javax.swing.JMenuItem(new DefaultEditorKit.PasteAction());
+        jMenuConfiguracion = new javax.swing.JMenu();
+        jMenuItemConfiguracion = new javax.swing.JMenuItem();
         helpMenu = new javax.swing.JMenu();
         contentsMenuItem = new javax.swing.JMenuItem();
         aboutMenuItem = new javax.swing.JMenuItem();
@@ -88,6 +123,77 @@ public class NewApplication extends javax.swing.JFrame {
                 .addContainerGap(29, Short.MAX_VALUE))
         );
 
+        jMenuItemClear.setText("Limpiar");
+        jMenuItemClear.setToolTipText("");
+        jMenuItemClear.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemClearActionPerformed(evt);
+            }
+        });
+        jPopupMenuSalida.add(jMenuItemClear);
+
+        jDialogConfiguracion.setTitle("Configuracion");
+
+        jLabel4.setFont(new java.awt.Font("Cantarell", 1, 15)); // NOI18N
+        jLabel4.setText("Path Compilador");
+
+        jButton2.setText("OK");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
+        jLabel5.setFont(new java.awt.Font("Cantarell", 1, 15)); // NOI18N
+        jLabel5.setText("Argumentos");
+
+        javax.swing.GroupLayout jDialogConfiguracionLayout = new javax.swing.GroupLayout(jDialogConfiguracion.getContentPane());
+        jDialogConfiguracion.getContentPane().setLayout(jDialogConfiguracionLayout);
+        jDialogConfiguracionLayout.setHorizontalGroup(
+            jDialogConfiguracionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jDialogConfiguracionLayout.createSequentialGroup()
+                .addGroup(jDialogConfiguracionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jDialogConfiguracionLayout.createSequentialGroup()
+                        .addGap(28, 28, 28)
+                        .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jDialogConfiguracionLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(jDialogConfiguracionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(jDialogConfiguracionLayout.createSequentialGroup()
+                                .addComponent(jLabel4)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jTextFieldPathCompilador, javax.swing.GroupLayout.PREFERRED_SIZE, 245, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jDialogConfiguracionLayout.createSequentialGroup()
+                                .addComponent(jLabel5)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jTextFieldArgumentos, javax.swing.GroupLayout.PREFERRED_SIZE, 245, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addContainerGap(22, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jDialogConfiguracionLayout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jButton2)
+                .addGap(180, 180, 180))
+        );
+        jDialogConfiguracionLayout.setVerticalGroup(
+            jDialogConfiguracionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jDialogConfiguracionLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jDialogConfiguracionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jTextFieldPathCompilador, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4))
+                .addGroup(jDialogConfiguracionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jDialogConfiguracionLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jDialogConfiguracionLayout.createSequentialGroup()
+                        .addGap(15, 15, 15)
+                        .addComponent(jTextFieldArgumentos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(46, 46, 46)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton2)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("IdeC");
 
@@ -98,10 +204,10 @@ public class NewApplication extends javax.swing.JFrame {
 
         jScrollPane2.setViewportView(jTree1);
 
-        jTextArea1.setEditable(false);
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane3.setViewportView(jTextArea1);
+        jTextAreaSalida.setEditable(false);
+        jTextAreaSalida.setColumns(20);
+        jTextAreaSalida.setRows(5);
+        jScrollPane3.setViewportView(jTextAreaSalida);
 
         jLabel2.setFont(new java.awt.Font("Cantarell", 1, 18)); // NOI18N
         jLabel2.setText("Salida");
@@ -115,6 +221,14 @@ public class NewApplication extends javax.swing.JFrame {
                 fileMenuActionPerformed(evt);
             }
         });
+
+        nuevoProyectoMenu.setText("Nuevo Proyecto");
+        nuevoProyectoMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nuevoProyectoMenuActionPerformed(evt);
+            }
+        });
+        fileMenu.add(nuevoProyectoMenu);
 
         openMenuItem.setMnemonic('o');
         openMenuItem.setText("Open");
@@ -150,6 +264,26 @@ public class NewApplication extends javax.swing.JFrame {
 
         menuBar.add(fileMenu);
 
+        runMenu.setText("Run");
+
+        runMenuItem.setText("Run");
+        runMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                runMenuItemActionPerformed(evt);
+            }
+        });
+        runMenu.add(runMenuItem);
+
+        compilarMenuItem.setText("Compìle");
+        compilarMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                compilarMenuItemActionPerformed(evt);
+            }
+        });
+        runMenu.add(compilarMenuItem);
+
+        menuBar.add(runMenu);
+
         editMenu.setMnemonic('e');
         editMenu.setText("Edit");
 
@@ -181,6 +315,23 @@ public class NewApplication extends javax.swing.JFrame {
         editMenu.add(pasteMenuItem);
 
         menuBar.add(editMenu);
+
+        jMenuConfiguracion.setText("Configuracion");
+        jMenuConfiguracion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuConfiguracionActionPerformed(evt);
+            }
+        });
+
+        jMenuItemConfiguracion.setText("Configuracion");
+        jMenuItemConfiguracion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemConfiguracionActionPerformed(evt);
+            }
+        });
+        jMenuConfiguracion.add(jMenuItemConfiguracion);
+
+        menuBar.add(jMenuConfiguracion);
 
         helpMenu.setMnemonic('h');
         helpMenu.setText("Help");
@@ -243,6 +394,8 @@ public class NewApplication extends javax.swing.JFrame {
 
     private void openMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openMenuItemActionPerformed
         int returnVal = jFileChooser1.showOpenDialog(this);
+        this.jTextPane1.setText("");
+        
         String cadena;
     if (returnVal == jFileChooser1.APPROVE_OPTION) {
         File file = jFileChooser1.getSelectedFile();
@@ -260,7 +413,7 @@ public class NewApplication extends javax.swing.JFrame {
               try {
                   abrirarchivo = true;
                   doc.insertString(contador++, ""+cadena.charAt(c), attr);
-                  System.out.println("----"+cadena.charAt(c));
+                  
               } catch (BadLocationException ex) {
                   Logger.getLogger(NewApplication.class.getName()).log(Level.SEVERE, null, ex);
               }
@@ -289,8 +442,30 @@ public class NewApplication extends javax.swing.JFrame {
     private void saveMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveMenuItemActionPerformed
         int returnVal = jFileChooser1.showSaveDialog(this);
     if (returnVal == jFileChooser1.APPROVE_OPTION) {
+        FileWriter fw ;
+        File file = jFileChooser1.getSelectedFile();
         try {
-            FileWriter fw = new FileWriter(jFileChooser1.getSelectedFile()+".txt");
+            
+            
+           switch(jFileChooser1.getFileFilter().getDescription()){
+               case "c":
+                   System.out.println("---------------");
+                   fw = new FileWriter(jFileChooser1.getSelectedFile()+".c");
+                   break;
+               case "c++":
+                   fw = new FileWriter(jFileChooser1.getSelectedFile()+".cpp");
+                   break;
+               case "cc":
+                   fw = new FileWriter(jFileChooser1.getSelectedFile()+".cc");
+                   break;
+               default :
+                   fw = new FileWriter(jFileChooser1.getSelectedFile()+".cpp");
+                   break;
+                   
+           }
+            
+             System.out.println("----------name " + jFileChooser1.getSelectedFile().getName());
+            
             fw.write(jTextPane1.getText());
             fw.close();
         } catch (Exception ex) {
@@ -322,6 +497,98 @@ public class NewApplication extends javax.swing.JFrame {
         
         
     }//GEN-LAST:event_pasteMenuItemActionPerformed
+
+    private void compilarMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_compilarMenuItemActionPerformed
+        Compile compile = new Compile();
+        
+        int lugar = this.jFileChooser1.getSelectedFile().getName().lastIndexOf('.');
+        String filename = this.jFileChooser1.getSelectedFile().getName().substring(0, lugar);
+        String salida = compile.compile(this.jFileChooser1.getSelectedFile().getAbsolutePath(), filename, this.jFileChooser1.getSelectedFile().getParent());
+        
+        this.jTextAreaSalida.setText(salida);
+    }//GEN-LAST:event_compilarMenuItemActionPerformed
+
+    private void runMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_runMenuItemActionPerformed
+        Run run = new Run();
+        
+        int lugar = this.jFileChooser1.getSelectedFile().getName().lastIndexOf('.');
+        String filename = this.jFileChooser1.getSelectedFile().getName().substring(0, lugar);
+        String salida = run.run(filename, this.jFileChooser1.getSelectedFile().getParent());
+        this.jTextAreaSalida.setText(salida);
+    }//GEN-LAST:event_runMenuItemActionPerformed
+
+    private void jMenuItemClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemClearActionPerformed
+        this.jTextAreaSalida.setText("");
+    }//GEN-LAST:event_jMenuItemClearActionPerformed
+
+    private void jMenuConfiguracionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuConfiguracionActionPerformed
+       
+        
+    }//GEN-LAST:event_jMenuConfiguracionActionPerformed
+
+    private void jMenuItemConfiguracionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemConfiguracionActionPerformed
+         Configuracion config = new Configuracion();
+        
+        this.jTextFieldPathCompilador.setText(config.leerPropiedad("pathcompilador"));
+        this.jTextFieldArgumentos.setText(config.leerPropiedad("argumentos"));
+        this.jDialogConfiguracion.setSize(450, 150);
+        this.jDialogConfiguracion.dispose();
+        this.jDialogConfiguracion.setEnabled(true);
+        this.jDialogConfiguracion.setVisible(true);
+    }//GEN-LAST:event_jMenuItemConfiguracionActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+         Configuracion config = new Configuracion();
+        
+        config.escribirPropiedad("pathcompilador",this.jTextFieldPathCompilador.getText());
+        config.escribirPropiedad("argumentos",this.jTextFieldArgumentos.getText());
+        this.jDialogConfiguracion.setEnabled(false);
+        this.jDialogConfiguracion.setVisible(false);
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void nuevoProyectoMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nuevoProyectoMenuActionPerformed
+           int returnVal = jFileChooser1.showOpenDialog(this);
+        this.jTextPane1.setText("");
+        
+        String cadena;
+    if (returnVal == jFileChooser1.APPROVE_OPTION) {
+        File file = jFileChooser1.getCurrentDirectory();
+        Path FROM = Paths.get(System.getProperty("user.dir")+"/TemplateProject/Makefile");
+        Path TO = null;
+               try {
+                   TO = Paths.get(jFileChooser1.getSelectedFile().getCanonicalPath());
+                   System.out.println("----------path------"+ jFileChooser1.getSelectedFile().getCanonicalPath());
+               } catch (IOException ex) {
+                   Logger.getLogger(NewApplication.class.getName()).log(Level.SEVERE, null, ex);
+               }
+       
+        //sobreescribir el fichero de destino, si existe, y copiar
+        // los atributos, incluyendo los permisos rwx
+        CopyOption[] options = new CopyOption[]{
+          StandardCopyOption.REPLACE_EXISTING,
+          StandardCopyOption.COPY_ATTRIBUTES
+        }; 
+        Set<PosixFilePermission> perms = PosixFilePermissions.fromString("rwxrwxrwx");
+        FileAttribute<Set<PosixFilePermission>> attr = PosixFilePermissions.asFileAttribute(perms);
+        
+               try {
+                   Files.deleteIfExists(Paths.get(jFileChooser1.getSelectedFile().getCanonicalPath()+"/inc"));
+                   Files.deleteIfExists(Paths.get(jFileChooser1.getSelectedFile().getCanonicalPath()+"/src"));
+                   Files.deleteIfExists(Paths.get(jFileChooser1.getSelectedFile().getCanonicalPath()+"/Makefile"));
+                   Files.createDirectory(Paths.get(jFileChooser1.getSelectedFile().getCanonicalPath()+"/inc"), attr);
+                   Files.createDirectory(Paths.get(jFileChooser1.getSelectedFile().getCanonicalPath()+"/src"), attr);
+                   Files.copy(FROM, Paths.get(jFileChooser1.getSelectedFile().getCanonicalPath()+"/Makefile"), options);
+                   
+               } catch (IOException ex) {
+                   Logger.getLogger(NewApplication.class.getName()).log(Level.SEVERE, null, ex);
+               }
+        System.out.println("-------userdir----------"+System.getProperty("user.dir"));
+        
+    } else {
+        System.out.println("Directorio cancelado por el usuario");
+    }
+        
+    }//GEN-LAST:event_nuevoProyectoMenuActionPerformed
 
     /**
      * @param args the command line arguments
@@ -360,6 +627,7 @@ public class NewApplication extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem aboutMenuItem;
+    private javax.swing.JMenuItem compilarMenuItem;
     private javax.swing.JMenuItem contentsMenuItem;
     private javax.swing.JMenuItem copyMenuItem;
     private javax.swing.JMenuItem cutMenuItem;
@@ -367,20 +635,34 @@ public class NewApplication extends javax.swing.JFrame {
     private javax.swing.JMenuItem exitMenuItem;
     private javax.swing.JMenu fileMenu;
     private javax.swing.JMenu helpMenu;
+    private javax.swing.JButton jButton2;
     private javax.swing.JDialog jDialog1;
+    private javax.swing.JDialog jDialogConfiguracion;
     private javax.swing.JFileChooser jFileChooser1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JMenu jMenuConfiguracion;
+    private javax.swing.JMenuItem jMenuItemClear;
+    private javax.swing.JMenuItem jMenuItemConfiguracion;
+    private javax.swing.JPopupMenu jPopupMenuSalida;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JTextArea jTextAreaSalida;
+    private javax.swing.JTextField jTextFieldArgumentos;
+    private javax.swing.JTextField jTextFieldPathCompilador;
     private javax.swing.JTextPane jTextPane1;
     private javax.swing.JTree jTree1;
     private javax.swing.JMenuBar menuBar;
+    private javax.swing.JMenuItem nuevoProyectoMenu;
     private javax.swing.JMenuItem openMenuItem;
     private javax.swing.JMenuItem pasteMenuItem;
+    private javax.swing.JMenu runMenu;
+    private javax.swing.JMenuItem runMenuItem;
     private javax.swing.JMenuItem saveAsMenuItem;
     private javax.swing.JMenuItem saveMenuItem;
     // End of variables declaration//GEN-END:variables
